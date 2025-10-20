@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Version Check</title>
+    <style>
+        body {
+            font-family: monospace;
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 30px;
+            background: #0f0f0f;
+            color: #00ff00;
+        }
+        .success { color: #00ff00; font-size: 32px; font-weight: bold; }
+        .error { color: #ff0000; font-size: 32px; font-weight: bold; }
+        .box { background: #1a1a1a; padding: 20px; border: 2px solid #333; margin: 20px 0; border-radius: 8px; }
+        button {
+            padding: 15px 30px;
+            font-size: 18px;
+            background: #00ff00;
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 10px;
+            font-weight: bold;
+        }
+        button:hover { background: #00cc00; }
+        code { background: #2a2a2a; padding: 5px 10px; border-radius: 4px; color: #ffff00; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Flight Tracker Version Check</h1>
+
+    <div class="box">
+        <h2>TEST 1: Check if Demo Mode exists</h2>
+        <button onclick="checkDemoMode()">Run Test</button>
+        <div id="test1-result"></div>
+    </div>
+
+    <div class="box">
+        <h2>TEST 2: Check mock data generator</h2>
+        <button onclick="checkMockData()">Run Test</button>
+        <div id="test2-result"></div>
+    </div>
+
+    <div class="box">
+        <h2>Instructions if Tests FAIL:</h2>
+        <ol style="color: #fff;">
+            <li><strong>Close ALL browser tabs</strong> (every single one)</li>
+            <li><strong>Open Private/Incognito Window:</strong>
+                <ul>
+                    <li>Chrome: Cmd/Ctrl + Shift + N</li>
+                    <li>Firefox: Cmd/Ctrl + Shift + P</li>
+                    <li>Safari: Cmd + Shift + N</li>
+                </ul>
+            </li>
+            <li><strong>Go to: </strong><code>http://localhost:3000/</code></li>
+            <li><strong>Look for yellow badge: </strong><code>🎭 DEMO MODE</code></li>
+        </ol>
+    </div>
+
+    <script type="module">
+        window.checkDemoMode = async () => {
+            const result = document.getElementById('test1-result');
+            result.innerHTML = '<p style="color: yellow;">Testing...</p>';
+
+            try {
+                // Try to load the App module
+                const response = await fetch('/src/App.tsx');
+                const code = await response.text();
+
+                // Check if demo mode code exists
+                const hasDemoMode = code.includes('demoMode') && code.includes('🎭 DEMO MODE');
+
+                if (hasDemoMode) {
+                    result.innerHTML = `
+                        <p class="success">✅ PASS - Demo mode code found!</p>
+                        <p style="color: #fff;">The new version is on the server.</p>
+                    `;
+                } else {
+                    result.innerHTML = `
+                        <p class="error">❌ FAIL - Demo mode NOT found!</p>
+                        <p style="color: #fff;">Old code still on server - this shouldn't happen.</p>
+                    `;
+                }
+            } catch (error) {
+                result.innerHTML = `<p class="error">❌ ERROR: ${error.message}</p>`;
+            }
+        };
+
+        window.checkMockData = async () => {
+            const result = document.getElementById('test2-result');
+            result.innerHTML = '<p style="color: yellow;">Testing...</p>';
+
+            try {
+                const response = await fetch('/src/services/mockData.ts');
+                const code = await response.text();
+
+                const hasMockData = code.includes('generateMockAircraftData') && code.includes('getMockAircraft');
+
+                if (hasMockData) {
+                    result.innerHTML = `
+                        <p class="success">✅ PASS - Mock data generator found!</p>
+                        <p style="color: #fff;">The mock data service exists.</p>
+                    `;
+                } else {
+                    result.innerHTML = `
+                        <p class="error">❌ FAIL - Mock data NOT found!</p>
+                    `;
+                }
+            } catch (error) {
+                result.innerHTML = `<p class="error">❌ ERROR: ${error.message}</p>`;
+            }
+        };
+
+        // Auto-run tests
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                checkDemoMode();
+                setTimeout(() => checkMockData(), 500);
+            }, 500);
+        });
+    </script>
+</body>
+</html>

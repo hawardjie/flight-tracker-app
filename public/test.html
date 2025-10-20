@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>OpenSky API Test</title>
+    <style>
+        body { font-family: monospace; padding: 20px; background: #1a1a1a; color: #fff; }
+        button { padding: 10px 20px; font-size: 16px; cursor: pointer; }
+        pre { background: #2a2a2a; padding: 10px; border-radius: 5px; overflow: auto; }
+        .error { color: #ff4444; }
+        .success { color: #44ff44; }
+    </style>
+</head>
+<body>
+    <h1>OpenSky Network API Test</h1>
+    <button onclick="testAPI()">Test API</button>
+    <div id="output"></div>
+
+    <script>
+        async function testAPI() {
+            const output = document.getElementById('output');
+            output.innerHTML = '<p>Testing OpenSky API...</p>';
+
+            try {
+                console.log('Fetching from OpenSky Network...');
+                const response = await fetch('https://opensky-network.org/api/states/all');
+
+                output.innerHTML += `<p class="success">Response status: ${response.status}</p>`;
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+
+                output.innerHTML += `<p class="success">✓ API call successful!</p>`;
+                output.innerHTML += `<p>Time: ${new Date(data.time * 1000).toLocaleString()}</p>`;
+                output.innerHTML += `<p>Total aircraft: ${data.states ? data.states.length : 0}</p>`;
+
+                if (data.states && data.states.length > 0) {
+                    output.innerHTML += '<h3>First 3 aircraft:</h3>';
+                    output.innerHTML += '<pre>' + JSON.stringify(data.states.slice(0, 3), null, 2) + '</pre>';
+
+                    // Filter for US
+                    const usAircraft = data.states.filter(state => {
+                        const lat = state[6];
+                        const lng = state[5];
+                        return lat !== null && lng !== null &&
+                               lat >= 24.5 && lat <= 49.0 &&
+                               lng >= -125.0 && lng <= -66.0;
+                    });
+
+                    output.innerHTML += `<p class="success">US aircraft: ${usAircraft.length}</p>`;
+                } else {
+                    output.innerHTML += '<p class="error">No aircraft data in response</p>';
+                }
+
+            } catch (error) {
+                console.error('API test failed:', error);
+                output.innerHTML += `<p class="error">✗ Error: ${error.message}</p>`;
+                output.innerHTML += `<pre class="error">${error.stack || ''}</pre>`;
+            }
+        }
+
+        // Auto-run on load
+        window.onload = () => {
+            testAPI();
+        };
+    </script>
+</body>
+</html>
