@@ -313,9 +313,11 @@ No changes needed! ✅
 
 #### Step 5: Access Your App
 
-Your flight tracker will be available at:
+Verify your flight tracker website. 
+
+Example:
 ```
-https://flight-tracker-app.vercel.app
+https://flight-tracker-app-delta.vercel.app
 ```
 Or your custom domain if configured.
 
