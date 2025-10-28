@@ -90,7 +90,7 @@ function App() {
       <header className="bg-card border-b border-border px-6 py-4 shadow-lg">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
-            <Plane className="w-8 h-8 text-primary" />
+            <img src="/favicon.svg" alt="Flight Tracker Logo" className="w-8 h-8" />
             <div>
               <h1 className="text-2xl font-bold flex items-center gap-2">
                 Flight Info Today - US Airspace
