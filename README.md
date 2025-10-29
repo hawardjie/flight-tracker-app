@@ -132,7 +132,7 @@ npm run preview
 
 This application uses **Airplanes.live** - a 100% FREE community-driven ADS-B data source!
 
-### ✈️ Airplanes.live API
+### Airplanes.live API
 
 - **Cost**: FREE forever - No paid tiers
 - **Authentication**: None required - No API key needed
@@ -140,15 +140,6 @@ This application uses **Airplanes.live** - a 100% FREE community-driven ADS-B da
 - **Data Coverage**: Global real-time ADS-B data from community receivers
 - **Setup**: Zero configuration - Works out of the box
 - **Documentation**: [airplanes.live/api-guide](https://airplanes.live/api-guide/)
-
-### Why Airplanes.live?
-
-✅ **No API Key** - Start using immediately
-✅ **100% FREE** - No paid plans or usage limits
-✅ **Community-Driven** - Real data from enthusiast receivers worldwide
-✅ **Simple Rate Limits** - 1 request per second (15s default refresh)
-✅ **No Registration** - Anonymous access included
-✅ **High Quality Data** - ADS-B and MLAT from global network
 
 ### Data Fields Provided
 
@@ -303,13 +294,11 @@ Vercel automatically configures:
 - **Output Directory**: `dist`
 - **Install Command**: `npm install`
 
-No changes needed! ✅
-
 #### Step 4: Deploy
 
 1. Click **"Deploy"**
 2. Wait 1-2 minutes for the build to complete
-3. Your app is now live! 🎉
+3. Your app is now live!
 
 #### Step 5: Access Your App
 
@@ -339,13 +328,13 @@ vercel --prod
 
 ### Environment Variables
 
-**No environment variables needed!** 🎉
+**No environment variables needed!**
 
 This app uses Airplanes.live which requires:
-- ✅ No API key
-- ✅ No registration
-- ✅ No authentication
-- ✅ Zero configuration
+- No API key
+- No registration
+- No authentication
+- Zero configuration
 
 Just deploy and it works!
 
