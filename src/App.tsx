@@ -20,7 +20,7 @@ const US_CENTER: [number, number] = [39.8, -98.5];
 
 function App() {
   const [autoRefresh, setAutoRefresh] = useState(true); // ON by default - auto-load flights
-  const [refreshInterval, setRefreshInterval] = useState(15000); // 15s (Airplanes.live: 1 req/sec limit)
+  const [refreshInterval, setRefreshInterval] = useState(30000); // 30s - OpenSky single-request fetch, ~10s data resolution
   const [selectedAircraft, setSelectedAircraft] = useState<Aircraft | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [filters, setFilters] = useState<FilterOptions>({
@@ -185,7 +185,7 @@ function App() {
                       ✈️ Ready to Track Live Flights
                     </h2>
                     <p className="text-lg text-muted-foreground mb-6">
-                      Start tracking real-time aircraft over US airspace using Airplanes.live - completely FREE with no API key required!
+                      Start tracking real-time aircraft over US airspace using the OpenSky Network - completely FREE with no API key required!
                     </p>
                     <button
                       onClick={() => {
@@ -198,12 +198,12 @@ function App() {
                     </button>
                     <div className="mt-6 p-4 bg-secondary/50 rounded-lg border border-border">
                       <div className="text-sm text-muted-foreground space-y-2">
-                        <p className="font-bold text-blue-300">Using Airplanes.live API 🎉</p>
+                        <p className="font-bold text-blue-300">Using OpenSky Network API 🎉</p>
                         <p>
-                          <strong>100% FREE</strong> - No API key required! Rate limit: 1 request per second.
+                          <strong>100% FREE</strong> - No API key required! All US aircraft fetched in a single request.
                         </p>
                         <p>
-                          Community-driven ADS-B data from enthusiast receivers worldwide.
+                          Crowd-sourced ADS-B data served at ~10 second resolution.
                         </p>
                         <p className="text-xs">
                           Auto-refresh is disabled by default. Once started, the app will update every {refreshInterval / 1000} seconds.
@@ -216,7 +216,7 @@ function App() {
                   <div>
                     <p className="text-lg text-muted-foreground mb-4">
                       {loading
-                        ? 'Loading aircraft data from Airplanes.live...'
+                        ? 'Loading aircraft data from OpenSky Network...'
                         : 'No aircraft data available'
                       }
                     </p>
@@ -232,17 +232,17 @@ function App() {
                         {error.includes('Rate limit') && (
                           <div className="text-xs text-muted-foreground mt-2 space-y-2">
                             <p>
-                              Airplanes.live API limits: 1 request per second.
+                              OpenSky throttles anonymous access by API credits.
                             </p>
                             <p className="font-bold text-yellow-300">
-                              ⏰ Please wait 60 seconds before trying again.
+                              ⏰ Please wait a few minutes before trying again.
                             </p>
                             <p className="text-white">
                               Steps to recover:
                             </p>
                             <ol className="list-decimal list-inside text-left space-y-1 text-white">
-                              <li>Wait 60 seconds</li>
-                              <li>Increase refresh interval to 20-30 seconds in settings</li>
+                              <li>Wait a few minutes</li>
+                              <li>Increase the refresh interval in settings</li>
                               <li>Click "Start Tracking" again</li>
                             </ol>
                           </div>
@@ -274,14 +274,14 @@ function App() {
           <div>
             Data provided by{' '}
             <a
-              href="https://airplanes.live"
+              href="https://opensky-network.org"
               target="_blank"
               rel="noopener noreferrer"
               className="text-primary hover:underline"
             >
-              Airplanes.live
+              OpenSky Network
             </a>
-            {' - 100% FREE, community-driven ADS-B data'}
+            {' - 100% FREE, crowd-sourced ADS-B data'}
           </div>
           <div>
             {lastUpdate && `Last updated: ${lastUpdate.toLocaleTimeString()}`}

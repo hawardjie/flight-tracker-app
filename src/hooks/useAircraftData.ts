@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Aircraft } from '../types/aircraft';
-import { getUSAircraftFromAirplanesLive } from '../services/airplanesLiveApi';
+import { getUSAircraftFromOpenSky } from '../services/openSkyApi';
 
 interface UseAircraftDataOptions {
   autoRefresh?: boolean;
@@ -18,7 +18,7 @@ interface UseAircraftDataReturn {
 export const useAircraftData = (options: UseAircraftDataOptions = {}): UseAircraftDataReturn => {
   const {
     autoRefresh = true, // ON by default - auto-load flights
-    refreshInterval = 15000, // 15 seconds default (Airplanes.live: 1 req/sec)
+    refreshInterval = 30000, // 30s default - OpenSky serves data at ~10s resolution; mind anonymous credit limits
   } = options;
 
   const [aircraft, setAircraft] = useState<Aircraft[]>([]);
@@ -28,15 +28,14 @@ export const useAircraftData = (options: UseAircraftDataOptions = {}): UseAircra
 
   const fetchAircraft = useCallback(async () => {
     console.log('[useAircraftData] fetchAircraft called');
-    console.log('[useAircraftData] Using Airplanes.live API');
 
     try {
       console.log('[useAircraftData] Clearing error state and setting loading...');
       setError(null);
       setLoading(true);
 
-      console.log('[useAircraftData] ✈️ Fetching US aircraft from Airplanes.live...');
-      const data = await getUSAircraftFromAirplanesLive();
+      console.log('[useAircraftData] ✈️ Fetching all US aircraft from OpenSky...');
+      const data = await getUSAircraftFromOpenSky();
 
       console.log(`[useAircraftData] Received ${data.length} aircraft, updating state...`);
       setAircraft(data);
