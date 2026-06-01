@@ -7,9 +7,9 @@ A modern, real-time flight tracking dashboard built with React, TypeScript, and 
 ## Features
 
 ### Real-time Flight Tracking
-- **Live Updates**: Automatic refresh of aircraft positions every 30 seconds (configurable)
-- **100% FREE Data Source**: Powered by the OpenSky Network - No API key required!
-- **Single-Request Coverage**: The entire continental US is fetched in one request
+- **Live Updates**: Automatic refresh of aircraft positions every 60 seconds (configurable)
+- **100% FREE Data Source**: Powered by Airplanes.live - No API key required!
+- **Single-Request Coverage**: The entire continental US is fetched in one request (a server-side tile sweep stays hidden from the browser)
 - **Interactive Map**: Dark-themed map centered on continental USA with smooth navigation and zoom controls
 - **Aircraft Markers**: Custom markers showing aircraft heading and status with altitude-based color coding
 - **US Focused**: Optimized to track flights over United States (24.5°N to 49°N, 125°W to 66°W)
@@ -55,7 +55,7 @@ A modern, real-time flight tracking dashboard built with React, TypeScript, and 
 - **Styling**: Tailwind CSS 3.4 for utility-first styling
 - **Mapping**: Leaflet 1.9 with React-Leaflet 4.2
 - **Icons**: Lucide React for modern iconography
-- **Data Source**: OpenSky Network REST API (100% FREE, no API key required)
+- **Data Source**: Airplanes.live REST API (100% FREE, no API key required)
 
 ## Getting Started
 
@@ -130,16 +130,16 @@ npm run preview
 
 ## API Information
 
-This application uses the **OpenSky Network** - a 100% FREE crowd-sourced ADS-B data source!
+This application uses **Airplanes.live** - a 100% FREE crowd-sourced ADS-B data source!
 
-### OpenSky Network API
+### Airplanes.live API
 
-- **Cost**: FREE - No API key required for anonymous access
-- **Authentication**: None required for anonymous access (authenticated accounts get higher limits)
-- **Single Request**: The `/states/all` endpoint returns every aircraft within a bounding box in one request, so the whole US is fetched at once
-- **Rate Limiting**: Anonymous access is credit-limited and serves data at ~10 second resolution
+- **Cost**: FREE - No API key required
+- **Authentication**: None required
+- **Single Request (client)**: The browser makes ONE call to the same-origin `/api/aircraft` endpoint. Airplanes.live's `/point` endpoint caps the radius at 250 nm, so a serverless function sweeps a grid of overlapping tiles covering the continental US, de-duplicates by ICAO hex, and returns the combined result. The tiling and rate limiting stay hidden on the server.
+- **Rate Limiting**: Airplanes.live suggests ~1 request/second; the server-side sweep paces itself accordingly and is time-boxed to finish within the Vercel function limit
 - **Data Coverage**: Global real-time ADS-B data from community receivers
-- **Documentation**: [openskynetwork.github.io/opensky-api](https://openskynetwork.github.io/opensky-api/rest.html)
+- **Documentation**: [airplanes.live/api-guide](https://airplanes.live/api-guide/)
 
 ### Data Fields Provided
 
@@ -158,6 +158,10 @@ The API provides comprehensive flight information (converted to imperial units i
 
 ```
 flight-tracker-app/
+├── api/
+│   └── aircraft.ts                # Vercel serverless fn: server-side US sweep
+├── lib/
+│   └── airplanesSweep.ts          # Shared Airplanes.live tile sweep (fn + dev)
 ├── src/
 │   ├── components/
 │   │   ├── AircraftDetails.tsx    # Selected aircraft details panel
@@ -168,7 +172,7 @@ flight-tracker-app/
 │   ├── hooks/
 │   │   └── useAircraftData.ts     # Custom hook for API data fetching
 │   ├── services/
-│   │   └── openSkyApi.ts          # OpenSky Network API integration
+│   │   └── airplanesLiveApi.ts    # Airplanes.live client (calls /api/aircraft)
 │   ├── types/
 │   │   └── aircraft.ts            # TypeScript interfaces
 │   ├── utils/
@@ -219,20 +223,20 @@ This project uses:
 
 ### Rate Limit Errors
 If you encounter "Rate limit exceeded" errors:
-- **Default Protection**: The app defaults to 30-second intervals
+- **Default Protection**: The app defaults to 60-second intervals
 - **Adjust Settings**: Increase the refresh interval in settings
 - **Wait it Out**: Wait a few minutes, then try again
 - **Avoid Manual Refresh**: Don't click the manual refresh button repeatedly
 
 **Why Rate Limits Happen:**
-OpenSky throttles anonymous access by API credits (a large bounding-box request costs more credits). You may hit this limit if:
+Airplanes.live throttles heavy use of its public API. You may hit this limit if:
 - You click manual refresh multiple times quickly
 - Your refresh interval is too low
 - Multiple browser tabs are open with the app
 
 ### No Aircraft Displayed
 - Check your internet connection
-- Verify the OpenSky Network API is operational at [opensky-network.org](https://opensky-network.org)
+- Verify the Airplanes.live API is operational at [airplanes.live](https://airplanes.live)
 - Try refreshing the page
 - Check browser console (F12) for errors
 - Wait a few minutes if rate-limited
@@ -264,12 +268,12 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Acknowledgments
 
-- **[OpenSky Network](https://opensky-network.org)** - For providing 100% FREE crowd-sourced ADS-B data
+- **[Airplanes.live](https://airplanes.live)** - For providing 100% FREE crowd-sourced ADS-B data
 - **[Leaflet](https://leafletjs.com)** - For the excellent mapping library
 - **[React Leaflet](https://react-leaflet.js.org)** - For React integration with Leaflet
 - **[Tailwind CSS](https://tailwindcss.com)** - For the utility-first styling framework
 - **[Vite](https://vitejs.dev)** - For the blazing fast build tool
-- **All ADS-B enthusiasts** who contribute to the OpenSky Network
+- **All ADS-B enthusiasts** who contribute to Airplanes.live
 
 ## Contact
 

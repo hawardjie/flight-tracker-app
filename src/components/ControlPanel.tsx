@@ -130,7 +130,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
                 <span>60s</span>
               </div>
               <p className="text-xs text-yellow-400 mt-2">
-                ⚠️ OpenSky API limit: 10 requests per 10 seconds. Use 15s+ to avoid rate limits.
+                ⚠️ Each refresh runs a server-side US sweep (~45s). Use longer intervals to stay polite to Airplanes.live.
               </p>
             </div>
           )}

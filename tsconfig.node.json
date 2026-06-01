@@ -2,7 +2,10 @@
   "compilerOptions": {
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
     "target": "ES2022",
-    "lib": ["ES2023"],
+    // DOM provides types for the web-standard globals (fetch, setTimeout,
+    // AbortController) that the server-side sweep in lib/airplanesSweep.ts uses
+    // and that Node 18+ implements natively.
+    "lib": ["ES2023", "DOM"],
     "module": "ESNext",
     "skipLibCheck": true,
 
