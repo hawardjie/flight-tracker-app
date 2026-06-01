@@ -13,9 +13,11 @@ import { Aircraft } from '../types/aircraft';
  * resolution. Authenticated accounts get higher limits.
  */
 
-// Same-origin proxy path (see vite.config.ts dev proxy and vercel.json rewrite)
-// which forwards to https://opensky-network.org/api to avoid browser CORS issues.
-const OPENSKY_API_BASE = '/opensky-api';
+// Same-origin proxy endpoint. In production this is a Vercel Node serverless
+// function (api/opensky.ts); in dev it's the Vite proxy (see vite.config.ts).
+// Both forward to https://opensky-network.org/api/states/all server-side,
+// avoiding browser CORS issues and OpenSky's edge-IP connection blocking.
+const OPENSKY_PROXY_ENDPOINT = '/api/opensky';
 
 // Continental US bounding box.
 const US_BBOX = {
@@ -126,7 +128,7 @@ const transformToAircraft = (s: OpenSkyStateVector): Aircraft | null => {
  */
 export const getUSAircraftFromOpenSky = async (): Promise<Aircraft[]> => {
   const { lamin, lomin, lamax, lomax } = US_BBOX;
-  const url = `${OPENSKY_API_BASE}/states/all?lamin=${lamin}&lomin=${lomin}&lamax=${lamax}&lomax=${lomax}`;
+  const url = `${OPENSKY_PROXY_ENDPOINT}?lamin=${lamin}&lomin=${lomin}&lamax=${lamax}&lomax=${lomax}`;
 
   console.log('[OpenSky API] 🇺🇸 Fetching all US aircraft in one request...');
 

@@ -8,18 +8,13 @@ export default defineConfig({
     port: 3000,
     open: true,
     proxy: {
-      // Proxy OpenSky API requests to avoid browser CORS issues.
-      // The browser calls /opensky-api/* (same origin); Vite forwards to the real API.
-      '/opensky-api': {
+      // Dev-only stand-in for the Vercel serverless function (api/opensky.ts).
+      // The browser calls /api/opensky?<bbox> (same origin); Vite forwards to
+      // OpenSky's /states/all, mirroring the production proxy's behavior.
+      '/api/opensky': {
         target: 'https://opensky-network.org/api',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/opensky-api/, ''),
-      },
-      // Proxy Airplanes.live API requests to avoid browser CORS/403 blocks.
-      '/airplanes-api': {
-        target: 'https://api.airplanes.live',
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/airplanes-api/, ''),
+        rewrite: (path) => path.replace(/^\/api\/opensky/, '/states/all'),
       },
     },
   },

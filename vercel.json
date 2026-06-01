@@ -6,15 +6,7 @@
   "framework": "vite",
   "rewrites": [
     {
-      "source": "/opensky-api/:path*",
-      "destination": "https://opensky-network.org/api/:path*"
-    },
-    {
-      "source": "/airplanes-api/:path*",
-      "destination": "https://api.airplanes.live/:path*"
-    },
-    {
-      "source": "/(.*)",
+      "source": "/((?!api/).*)",
       "destination": "/index.html"
     }
   ]
