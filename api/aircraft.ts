@@ -1,5 +1,4 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { sweepUSAircraft } from '../lib/airplanesSweep';
 
 /**
  * Server-side US aircraft feed backed by Airplanes.live.
@@ -11,9 +10,15 @@ import { sweepUSAircraft } from '../lib/airplanesSweep';
  *
  * Runs on Vercel's Node.js runtime (Lambda egress). Airplanes.live is reachable
  * from Vercel infrastructure, unlike OpenSky which blocks the cloud IP ranges.
+ *
+ * NOTE: the sweep module is loaded via dynamic import() INSIDE the handler so
+ * that any module-resolution/runtime error is caught and surfaced in the HTTP
+ * response body instead of crashing the function at load (which Vercel reports
+ * only as an opaque 500 FUNCTION_INVOCATION_FAILED).
  */
 export default async function handler(_req: VercelRequest, res: VercelResponse) {
   try {
+    const { sweepUSAircraft } = await import('../lib/airplanesSweep');
     const result = await sweepUSAircraft();
 
     // The sweep takes ~45s and the underlying data updates frequently, so cache
@@ -21,7 +26,9 @@ export default async function handler(_req: VercelRequest, res: VercelResponse) 
     res.setHeader('Cache-Control', 's-maxage=20, stale-while-revalidate=60');
     res.status(200).json(result);
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Unknown error';
-    res.status(502).json({ error: `Failed to sweep Airplanes.live: ${message}` });
+    const message = err instanceof Error ? err.message : String(err);
+    const stack = err instanceof Error ? err.stack : undefined;
+    console.error('[api/aircraft] failed:', message, stack);
+    res.status(502).json({ error: `Failed to sweep Airplanes.live: ${message}`, stack });
   }
 }
