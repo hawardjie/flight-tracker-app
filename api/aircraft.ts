@@ -18,7 +18,10 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
  */
 export default async function handler(_req: VercelRequest, res: VercelResponse) {
   try {
-    const { sweepUSAircraft } = await import('../lib/airplanesSweep');
+    // Explicit .js extension is required: package.json has "type": "module",
+    // so Vercel builds this function as native ESM where extensionless relative
+    // imports don't resolve. The .js specifier maps to the .ts source at build.
+    const { sweepUSAircraft } = await import('../lib/airplanesSweep.js');
     const result = await sweepUSAircraft();
 
     // The sweep takes ~45s and the underlying data updates frequently, so cache
